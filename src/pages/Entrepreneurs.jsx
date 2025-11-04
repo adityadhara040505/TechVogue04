@@ -1,13 +1,59 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { getCurrentUser } from '../lib/session'
 import { FaFlag, FaUsers, FaStar, FaCalendarAlt, FaEnvelope, FaChartPie, FaSearchDollar, FaCog, FaUserCircle } from 'react-icons/fa'
 
+function Stat({ icon, label, value, color = 'brand' }) {
+  return (
+    <div className={`rounded-lg border bg-white p-4 ${color === 'accent' ? 'border-accent-200' : 'border-brand-200'}`}>
+      <div className="flex items-center">
+        <div className={`rounded-full p-2 ${color === 'accent' ? 'bg-accent-100 text-accent-600' : 'bg-brand-100 text-brand-600'}`}>
+          {icon}
+        </div>
+        <div className="ml-4">
+          <div className="text-sm font-medium text-gray-500">{label}</div>
+          <div className="text-xl font-semibold text-gray-900">{value}</div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function Sidebar({ activeKey, onSelect }) {
+  const items = [
+    { key: 'overview', label: 'Overview', icon: <FaChartPie /> },
+    { key: 'milestones', label: 'Milestones', icon: <FaFlag /> },
+    { key: 'team', label: 'Team', icon: <FaUsers /> },
+    { key: 'settings', label: 'Settings', icon: <FaCog /> }
+  ]
+
+  return (
+    <nav className="space-y-1">
+      {items.map(item => (
+        <button
+          key={item.key}
+          onClick={() => onSelect(item.key)}
+          className={`flex w-full items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium ${
+            activeKey === item.key
+              ? 'bg-brand-100 text-brand-600'
+              : 'text-gray-700 hover:bg-gray-100'
+          }`}
+        >
+          {item.icon}
+          <span>{item.label}</span>
+        </button>
+      ))}
+    </nav>
+  )
+}
+
 export default function Entrepreneurs() {
-  const [tab, setTab] = useState('overview')
-  const [milestones, setMilestones] = useState([])
-  const [team, setTeam] = useState([])
-  const [reviews, setReviews] = useState([])
+  const [tab, setTab] = useState('overview');
+  const [milestones, setMilestones] = useState([]);
+  const [team, setTeam] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [investorInterest, setInvestorInterest] = useState(0);
+  const [messagesCount, setMessagesCount] = useState(0);
+  const location = useLocation();
   const [investorInterest, setInvestorInterest] = useState(0)
   const [messagesCount, setMessagesCount] = useState(0)
   const [role, setRole] = useState('investor')
@@ -26,20 +72,22 @@ export default function Entrepreneurs() {
   }
 
   useEffect(() => {
-    const me = getCurrentUser()
     try {
-      const ms = JSON.parse(localStorage.getItem('milestones') || '[]')
-      const members = JSON.parse(localStorage.getItem('teamMembers') || '[]')
-      const revs = JSON.parse(localStorage.getItem('peerReviews') || '[]')
-      const feedback = JSON.parse(localStorage.getItem('investorFeedback') || '[]')
-      const messages = JSON.parse(localStorage.getItem('messages') || '[]')
-      setMilestones(me ? ms.filter(x => x.userId === me.id) : [])
-      setTeam(me ? members.filter(x => x.userId === me.id) : [])
-      setReviews(me ? revs.filter(r => r.toUserId ? r.toUserId === me.id : true) : [])
-      setInvestorInterest(me ? feedback.filter(f => f.entrepreneurId === me.id).length : 0)
-      setMessagesCount(me ? messages.filter(m => m.toId === me.id || m.fromId === me.id).length : 0)
-    } catch {
-      setMilestones([]); setTeam([]); setReviews([]); setInvestorInterest(0); setMessagesCount(0)
+      const storedMilestones = JSON.parse(localStorage.getItem('milestones') || '[]');
+      const storedTeam = JSON.parse(localStorage.getItem('teamMembers') || '[]');
+      const storedReviews = JSON.parse(localStorage.getItem('peerReviews') || '[]');
+      setMilestones(storedMilestones);
+      setTeam(storedTeam);
+      setReviews(storedReviews);
+      setInvestorInterest(0);
+      setMessagesCount(0);
+    } catch (error) {
+      console.error('Error loading data:', error);
+      setMilestones([]);
+      setTeam([]);
+      setReviews([]);
+      setInvestorInterest(0);
+      setMessagesCount(0);
     }
   }, [])
 
@@ -64,40 +112,71 @@ export default function Entrepreneurs() {
   }, [])
 
   return (
-    <div className="mx-auto max-w-7xl p-8 text-[16px]">
-      <Header profile={getProfile()} milestones={milestones} />
-      <AIMatchDomains />
+    <div className="mx-auto max-w-7xl p-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Entrepreneur Dashboard</h1>
+        <p className="mt-2 text-gray-600">Manage your startup journey and connect with potential team members.</p>
+      </div>
+
       <div className="mb-6 grid gap-4 sm:grid-cols-4">
         <Stat icon={<FaStar />} label="Investor Interest" value={investorInterest} color="brand" />
         <Stat icon={<FaFlag />} label="Active Milestones" value={milestones.length} color="accent" />
         <Stat icon={<FaUsers />} label="Team Members" value={team.length} color="brand" />
         <Stat icon={<FaEnvelope />} label="Messages" value={messagesCount} color="accent" />
       </div>
+
       <div className="grid grid-cols-1 gap-6 md:grid-cols-[240px_1fr]">
         <Sidebar activeKey={tab} onSelect={(k)=>{ setTab(k); const h = `#tab=${k}`; if (window.location.hash !== h) window.location.hash = h }} />
-        <div>
+        <div className="rounded-lg border bg-white p-6">
 
-          {tab==='overview' && (
-        <div className="mt-6 flex justify-center">
-          <div className="w-full max-w-3xl"><StartupSummary /></div>
-        </div>
-      )}
+          {tab === 'overview' && (
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Startup Overview</h2>
+              <div className="prose prose-sm">
+                <p>Welcome to your startup dashboard! Here you can:</p>
+                <ul>
+                  <li>Track your startup's progress and milestones</li>
+                  <li>Manage your team and find new talent</li>
+                  <li>Connect with potential investors</li>
+                  <li>Access resources and tools for growth</li>
+                </ul>
+              </div>
+            </div>
+          )}
 
-      {tab==='milestones' && (
-        <div className="mt-4 rounded-lg border bg-white p-4">
-          <MilestonesEditor onChange={(list)=>setMilestones(list)} />
-        </div>
-      )}
+          {tab === 'milestones' && (
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Milestones</h2>
+              <div className="space-y-4">
+                {milestones.map((milestone, index) => (
+                  <div key={index} className="p-4 border rounded-lg">
+                    <div className="font-medium">{milestone.title}</div>
+                    <div className="text-sm text-gray-600 mt-1">{milestone.description}</div>
+                  </div>
+                ))}
+                {milestones.length === 0 && (
+                  <p className="text-gray-500">No milestones added yet. Add your first milestone to track progress.</p>
+                )}
+              </div>
+            </div>
+          )}
 
-      {tab==='team' && (
-        <div className="mt-4 rounded-lg border bg-white p-4">
-          <ul className="list-disc pl-5 text-sm text-gray-700">
-            {team.slice().reverse().map(m => (
-              <li key={m.id}>{m.name} — {m.skills}</li>
-            ))}
-            {team.length === 0 && <li>No team members yet.</li>}
-          </ul>
-        </div>
+          {tab === 'team' && (
+            <div>
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Team Members</h2>
+              <div className="space-y-4">
+                {team.map((member, index) => (
+                  <div key={index} className="p-4 border rounded-lg">
+                    <div className="font-medium">{member.name}</div>
+                    <div className="text-sm text-gray-600 mt-1">{member.skills}</div>
+                  </div>
+                ))}
+                {team.length === 0 && (
+                  <p className="text-gray-500">No team members yet. Start building your team!</p>
+                )}
+              </div>
+            </div>
+          )}
       )}
 
       {tab==='reviews' && (
