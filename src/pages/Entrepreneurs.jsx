@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { FaFlag, FaUsers, FaStar, FaCalendarAlt, FaEnvelope, FaChartPie, FaSearchDollar, FaCog, FaUserCircle } from 'react-icons/fa'
+import { FaFlag, FaUsers, FaStar, FaCalendarAlt, FaEnvelope, FaChartPie, FaSearchDollar, FaCog, FaUserCircle, FaRocket, FaRobot, FaHandshake } from 'react-icons/fa'
+import PitchEventModule from '../components/entrepreneur/PitchEventModule'
+import AIMatchmaking from '../components/entrepreneur/AIMatchmaking'
+import Collaborate from '../components/entrepreneur/Collaborate'
 
 function Stat({ icon, label, value, color = 'brand', suffix, variant = 'default' }) {
   if (variant === 'simple') {
@@ -225,6 +228,12 @@ export default function Entrepreneurs() {
               </div>
             </div>
           )}
+
+          {/* New Tabs */}
+          {tab === 'pitch-events' && <PitchEventModule />}
+          {tab === 'ai-matchmaking' && <AIMatchmaking />}
+          {tab === 'collaborate' && <Collaborate />}
+
         </div>
       </div>
     </div>
@@ -232,31 +241,66 @@ export default function Entrepreneurs() {
 }
 
 function Sidebar({ activeKey, onSelect }) {
-  const items = [
-    { key: 'overview', label: 'Overview', icon: <FaChartPie /> },
-    { key: 'milestones', label: 'Milestones', icon: <FaFlag /> },
-    { key: 'team', label: 'Team', icon: <FaUsers /> },
-    { key: 'reviews', label: 'Reviews', icon: <FaStar /> },
-    { key: 'settings', label: 'Settings', icon: <FaCog /> }
-  ]
+  const sections = [
+    {
+      title: 'Main',
+      items: [
+        { key: 'overview', label: 'Overview', icon: <FaChartPie /> },
+        { key: 'milestones', label: 'Milestones', icon: <FaFlag /> },
+        { key: 'team', label: 'Team', icon: <FaUsers /> },
+        { key: 'reviews', label: 'Reviews', icon: <FaStar /> },
+      ]
+    },
+    {
+      title: 'Growth',
+      items: [
+        { key: 'pitch-events', label: 'Pitch Events', icon: <FaRocket /> },
+        { key: 'ai-matchmaking', label: 'AI Matchmaking', icon: <FaRobot /> },
+        { key: 'collaborate', label: 'Collaborate', icon: <FaHandshake /> },
+      ]
+    },
+    {
+      title: 'Communication',
+      items: [
+        { key: 'investors', label: 'Investors', icon: <FaSearchDollar /> },
+        { key: 'messages', label: 'Messages', icon: <FaEnvelope /> },
+      ]
+    },
+    {
+      title: 'Settings',
+      items: [
+        { key: 'settings', label: 'Settings', icon: <FaCog /> },
+        { key: 'profile', label: 'Profile', icon: <FaUserCircle /> },
+      ]
+    }
+  ];
 
   return (
-    <nav className="space-y-1">
-      {items.map(item => (
-        <button
-          key={item.key}
-          onClick={() => onSelect(item.key)}
-          className={`flex w-full items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium ${
-            activeKey === item.key
-              ? 'bg-brand-100 text-brand-600'
-              : 'text-gray-700 hover:bg-gray-100'
-          }`}
-        >
-          {item.icon}
-          <span>{item.label}</span>
-        </button>
+    <aside className="sticky top-20 h-max self-start rounded-xl border bg-white p-4 shadow-sm">
+      {sections.map(section => (
+        <div key={section.title} className="mb-6 last:mb-0">
+          <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+            {section.title}
+          </div>
+          <nav className="flex flex-col gap-1">
+            {section.items.map(item => (
+              <button
+                key={item.key}
+                onClick={() => onSelect(item.key)}
+                className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium ${
+                  activeKey === item.key
+                    ? 'bg-brand-100 text-brand-600'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </nav>
+        </div>
       ))}
-    </nav>
+    </aside>
   )
 }
 
