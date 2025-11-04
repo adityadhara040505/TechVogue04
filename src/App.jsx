@@ -19,7 +19,6 @@ import Freelancers from './pages/Freelancers';
 import CreatePitchEvent from './pages/CreatePitchEvent';
 import Pricing from './pages/Pricing';
 import AboutPage from './pages/AboutPage';
-import ContactPage from './pages/ContactPage';
 
 export default function App() {
   return (
@@ -59,7 +58,6 @@ export default function App() {
               <Route path="/freelancers" element={<ErrorBoundary><Freelancers /></ErrorBoundary>} />
               <Route path="/pricing" element={<ErrorBoundary><Pricing /></ErrorBoundary>} />
               <Route path="/about" element={<ErrorBoundary><AboutPage /></ErrorBoundary>} />
-              <Route path="/contact" element={<ErrorBoundary><ContactPage /></ErrorBoundary>} />
             </Routes>
           </div>
         </main>

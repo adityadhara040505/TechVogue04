@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaInfoCircle, FaEnvelope, FaSignInAlt } from 'react-icons/fa';
+import { FaInfoCircle, FaSignInAlt } from 'react-icons/fa';
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -130,7 +130,6 @@ export default function Navbar() {
             )}
             <div className="hidden md:flex space-x-4">
               <NavItem to="/about" icon={<FaInfoCircle />}>About</NavItem>
-              <NavItem to="/contact" icon={<FaEnvelope />}>Contact</NavItem>
             </div>
           </nav>
 
