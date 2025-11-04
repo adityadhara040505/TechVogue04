@@ -3,21 +3,34 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 export default function PitchEventModule() {
-  const [registeredEvents, setRegisteredEvents] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem('registeredPitchEvents') || '[]');
-    } catch {
-      return [];
-    }
-  });
+  const [registeredEvents, setRegisteredEvents] = useState([]);
+  const [pitchEvents, setPitchEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const [pitchEvents, setPitchEvents] = useState(() => {
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const fetchEvents = async () => {
+    setLoading(true);
     try {
-      return JSON.parse(localStorage.getItem('pitchEvents') || '[]');
-    } catch {
-      return [];
+      // Get events from localStorage
+      const events = JSON.parse(localStorage.getItem('pitchEvents') || '[]');
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      
+      // Get registered events for current user
+      const registrations = JSON.parse(localStorage.getItem('registeredPitchEvents') || '[]')
+        .filter(reg => reg.userId === currentUser?.id);
+
+      setPitchEvents(events);
+      setRegisteredEvents(registrations);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+      toast.error('Failed to load events');
+    } finally {
+      setLoading(false);
     }
-  });
+  };
 
   const handleRegister = (eventId) => {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));

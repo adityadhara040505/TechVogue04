@@ -123,6 +123,60 @@ export default function AIMatchmaking() {
     }
   };
 
+  const renderMatchInsights = () => (
+    <div className="border rounded-lg p-6 bg-white">
+      <h3 className="font-medium text-lg mb-4">Match Insights</h3>
+      <div className="space-y-4">
+        <div>
+          <div className="flex justify-between text-sm mb-1">
+            <span className="text-gray-600">Industry Match</span>
+            <span className="font-medium">{(WEIGHTS.industryMatch * 100)}%</span>
+          </div>
+          <div className="h-2 bg-gray-200 rounded-full">
+            <div 
+              className="h-full bg-brand-600 rounded-full" 
+              style={{ width: `${WEIGHTS.industryMatch * 100}%` }} 
+            />
+          </div>
+        </div>
+        <div>
+          <div className="flex justify-between text-sm mb-1">
+            <span className="text-gray-600">Investment Range</span>
+            <span className="font-medium">{(WEIGHTS.investmentRangeMatch * 100)}%</span>
+          </div>
+          <div className="h-2 bg-gray-200 rounded-full">
+            <div 
+              className="h-full bg-brand-600 rounded-full" 
+              style={{ width: `${WEIGHTS.investmentRangeMatch * 100}%` }} 
+            />
+          </div>
+        </div>
+        <div>
+          <div className="flex justify-between text-sm mb-1">
+            <span className="text-gray-600">Stage Match</span>
+            <span className="font-medium">{(WEIGHTS.stageMatch * 100)}%</span>
+          </div>
+          <div className="h-2 bg-gray-200 rounded-full">
+            <div 
+              className="h-full bg-brand-600 rounded-full" 
+              style={{ width: `${WEIGHTS.stageMatch * 100}%` }} 
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <h4 className="font-medium mb-2">Tips to Improve Matches</h4>
+        <ul className="space-y-2 text-sm text-gray-600">
+          <li>• Complete your startup profile</li>
+          <li>• Add more team members</li>
+          <li>• Upload pitch deck</li>
+          <li>• Verify company details</li>
+        </ul>
+      </div>
+    </div>
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -224,57 +278,7 @@ export default function AIMatchmaking() {
             </div>
           </div>
           <div className="space-y-6">
-            <div className="border rounded-lg p-6 bg-white">
-              <h3 className="font-medium text-lg mb-4">Match Insights</h3>
-              <div className="space-y-4">
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-600">Industry Match</span>
-                    <span className="font-medium">{(WEIGHTS.industryMatch * 100)}%</span>
-                  </div>
-                  <div className="h-2 bg-gray-200 rounded-full">
-                    <div 
-                      className="h-full bg-brand-600 rounded-full" 
-                      style={{ width: `${WEIGHTS.industryMatch * 100}%` }} 
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-600">Investment Range</span>
-                    <span className="font-medium">{(WEIGHTS.investmentRangeMatch * 100)}%</span>
-                  </div>
-                  <div className="h-2 bg-gray-200 rounded-full">
-                    <div 
-                      className="h-full bg-brand-600 rounded-full" 
-                      style={{ width: `${WEIGHTS.investmentRangeMatch * 100}%` }} 
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-600">Stage Match</span>
-                    <span className="font-medium">{(WEIGHTS.stageMatch * 100)}%</span>
-                  </div>
-                  <div className="h-2 bg-gray-200 rounded-full">
-                    <div 
-                      className="h-full bg-brand-600 rounded-full" 
-                      style={{ width: `${WEIGHTS.stageMatch * 100}%` }} 
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <h4 className="font-medium mb-2">Tips to Improve Matches</h4>
-                <ul className="space-y-2 text-sm text-gray-600">
-                  <li>• Complete your startup profile</li>
-                  <li>• Add more team members</li>
-                  <li>• Upload pitch deck</li>
-                  <li>• Verify company details</li>
-                </ul>
-              </div>
-            </div>
+            {renderMatchInsights()}
           </div>
         </div>
       )}
