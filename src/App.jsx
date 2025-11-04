@@ -16,6 +16,7 @@ import Settings from './pages/Settings';
 import Entrepreneurs from './pages/Entrepreneurs';
 import Investors from './pages/Investors';
 import Freelancers from './pages/Freelancers';
+import CreatePitchEvent from './pages/CreatePitchEvent';
 
 export default function App() {
   return (
@@ -38,6 +39,7 @@ export default function App() {
               <Route path="/auth" element={<Auth />} />
               <Route path="/dashboard/*" element={<Dashboard />} />
               <Route path="/pitch-events" element={<PitchEvents />} />
+              <Route path="/pitch-events/create" element={<CreatePitchEvent />} />
               <Route path="/startup-profile" element={<StartupProfile />} />
               <Route path="/startup/:id" element={<StartupProfile />} />
               <Route path="/investor/:id" element={<InvestorProfile />} />
