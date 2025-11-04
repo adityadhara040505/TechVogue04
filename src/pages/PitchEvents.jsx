@@ -16,40 +16,25 @@ export default function PitchEvents() {
     fetchEvents();
   }, []);
 
-  const fetchEvents = async () => {
+  const fetchEvents = () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/pitch-events', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (response.status === 401) {
-        toast.error('Please sign in to view events');
-        return;
-      }
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch events');
-      }
-      
-      const data = await response.json();
-      console.log('Fetched events:', data);
+      // Get events from localStorage
+      const storedEvents = JSON.parse(localStorage.getItem('pitchEvents') || '[]');
+      console.log('Fetched events:', storedEvents);
       
       // Transform the data for FullCalendar
-      const transformedEvents = data.map(event => ({
-        id: event._id,
+      const transformedEvents = storedEvents.map(event => ({
+        id: event.id,
         title: event.title,
         start: event.date,
-        end: event.endDate || event.date, // Use endDate if available
+        end: event.endDate || event.date,
         description: event.description,
-        location: event.location,
+        location: event.venue,
         extendedProps: {
           status: event.status,
-          attendees: event.attendees || [],
-          organizer: event.organizer,
+          maxParticipants: event.maxParticipants,
+          requirements: event.requirements,
+          format: event.format
         },
         className: getEventClassName(event)
       }));
