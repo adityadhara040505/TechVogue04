@@ -7,6 +7,7 @@ import Auth from './pages/Auth';
 import ErrorBoundary from './components/ErrorBoundary';
 import Dashboard from './pages/Dashboard';
 import PitchEvents from './pages/PitchEvents';
+import { lazy, Suspense } from 'react';
 import StartupProfile from './pages/StartupProfile';
 import InvestorProfile from './pages/InvestorProfile';
 import FreelancerProfile from './pages/FreelancerProfile';
@@ -23,47 +24,45 @@ import AboutPage from './pages/AboutPage';
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen flex flex-col bg-gray-50">
-        <Toaster 
-          position="top-right"
-          toastOptions={{
-            style: {
-              background: '#4F46E5',
-              color: '#ffffff',
-            },
-          }}
-        />
-        <Navbar />
-        <main className="flex-grow">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/dashboard/*" element={<Dashboard />} />
-              <Route path="/pitch-events" element={<PitchEvents />} />
-              <Route path="/pitch-events/create" element={<CreatePitchEvent />} />
-              <Route path="/StartupProfile" element={<StartupProfile />} />
-              <Route path="/startup/:id" element={<StartupProfile />} />
-              <Route path="/investor/:id" element={<InvestorProfile />} />
-              <Route path="/freelancer/:id" element={<FreelancerProfile />} />
-              <Route path="/marketplace" element={
-                <ErrorBoundary>
-                  <Marketplace />
-                </ErrorBoundary>
-              } />
-              <Route path="/project/:id" element={<ProjectDetails />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/entrepreneurs" element={<ErrorBoundary><Entrepreneurs /></ErrorBoundary>} />
-              <Route path="/investors" element={<ErrorBoundary><Investors /></ErrorBoundary>} />
-              <Route path="/freelancers" element={<ErrorBoundary><Freelancers /></ErrorBoundary>} />
-              <Route path="/pricing" element={<ErrorBoundary><Pricing /></ErrorBoundary>} />
-              <Route path="/about" element={<ErrorBoundary><AboutPage /></ErrorBoundary>} />
-            </Routes>
-          </div>
-        </main>
-        <Footer />
-      </div>
+      <ErrorBoundary>
+        <div className="min-h-screen flex flex-col">
+          <Toaster 
+            position="top-right"
+            toastOptions={{
+              style: {
+                background: '#4F46E5',
+                color: '#ffffff',
+              },
+            }}
+          />
+          <Navbar />
+          <main className="flex-grow bg-gray-50">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/dashboard/*" element={<Dashboard />} />
+                <Route path="/pitch-events" element={<PitchEvents />} />
+                <Route path="/pitch-events/create" element={<CreatePitchEvent />} />
+                <Route path="/StartupProfile" element={<StartupProfile />} />
+                <Route path="/startup/:id" element={<StartupProfile />} />
+                <Route path="/investor/:id" element={<InvestorProfile />} />
+                <Route path="/freelancer/:id" element={<FreelancerProfile />} />
+                <Route path="/marketplace" element={<Marketplace />} />
+                <Route path="/project/:id" element={<ProjectDetails />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/entrepreneurs" element={<Entrepreneurs />} />
+                <Route path="/investors" element={<Investors />} />
+                <Route path="/freelancers" element={<Freelancers />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/about" element={<AboutPage />} />
+              </Routes>
+            </div>
+          </main>
+          <Footer />
+        </div>
+      </ErrorBoundary>
     </BrowserRouter>
-  )
+  );
 }
 

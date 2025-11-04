@@ -31,11 +31,25 @@ router.post('/', authenticateToken, async (req, res) => {
 // Get all pitch events
 router.get('/', async (req, res) => {
   try {
-    const events = await PitchEvent.find()
+    const { filter = 'all' } = req.query;
+    const now = new Date();
+
+    let query = {};
+    if (filter === 'upcoming') {
+      query.date = { $gte: now };
+    } else if (filter === 'past') {
+      query.date = { $lt: now };
+    }
+
+    const events = await PitchEvent.find(query)
       .populate('organizer', 'name email')
-      .populate('registrations.entrepreneur', 'name email');
+      .populate('registrations.entrepreneur', 'name email')
+      .sort({ date: 1 });
+
+    console.log('Fetched events:', events);
     res.json(events);
   } catch (error) {
+    console.error('Error fetching events:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });

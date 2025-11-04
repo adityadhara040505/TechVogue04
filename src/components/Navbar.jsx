@@ -17,12 +17,12 @@ export default function Navbar() {
   }, [location]);
 
   return (
-    <header className="border-b bg-white shadow-sm">
+    <header className="sticky top-0 z-50 border-b bg-white shadow-sm">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2">
-              <span className="text-2xl font-bold text-brand-600">Tech Vogue</span>
+              <span className="text-2xl font-bold text-blue-600">Tech Vogue</span>
             </Link>
           </div>
 
@@ -31,7 +31,7 @@ export default function Navbar() {
               to="/"
               className={({ isActive }) =>
                 `text-sm font-medium transition ${
-                  isActive ? 'text-brand-600' : 'text-gray-500 hover:text-gray-700'
+                  isActive ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'
                 }`
               }
             >
