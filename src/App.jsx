@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import PrivateRoute from './components/PrivateRoute';
 import Home from './pages/Home';
 import Auth from './pages/Auth';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -41,13 +42,20 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/auth" element={<Auth />} />
-                <Route path="/dashboard/*" element={<Dashboard />} />
-                <Route path="/pitch-events" element={<PitchEvents />} />
-                <Route path="/pitch-events/create" element={<CreatePitchEvent />} />
-                <Route path="/StartupProfile" element={<StartupProfile />} />
-                <Route path="/startup/:id" element={<StartupProfile />} />
-                <Route path="/investor/:id" element={<InvestorProfile />} />
-                <Route path="/freelancer/:id" element={<FreelancerProfile />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/about" element={<AboutPage />} />
+                
+                {/* Protected Routes */}
+                <Route path="/dashboard/*" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+                <Route path="/entrepreneurs" element={<PrivateRoute requiredRole="entrepreneur"><Entrepreneurs /></PrivateRoute>} />
+                <Route path="/investors" element={<PrivateRoute requiredRole="investor"><Investors /></PrivateRoute>} />
+                <Route path="/freelancers" element={<PrivateRoute requiredRole="freelancer"><Freelancers /></PrivateRoute>} />
+                <Route path="/pitch-events" element={<PrivateRoute><PitchEvents /></PrivateRoute>} />
+                <Route path="/pitch-events/create" element={<PrivateRoute><CreatePitchEvent /></PrivateRoute>} />
+                <Route path="/StartupProfile" element={<PrivateRoute requiredRole="entrepreneur"><StartupProfile /></PrivateRoute>} />
+                <Route path="/startup/:id" element={<PrivateRoute><StartupProfile /></PrivateRoute>} />
+                <Route path="/investor/:id" element={<PrivateRoute><InvestorProfile /></PrivateRoute>} />
+                <Route path="/freelancer/:id" element={<PrivateRoute><FreelancerProfile /></PrivateRoute>} />
                 <Route path="/marketplace" element={<Marketplace />} />
                 <Route path="/project/:id" element={<ProjectDetails />} />
                 <Route path="/settings" element={<Settings />} />

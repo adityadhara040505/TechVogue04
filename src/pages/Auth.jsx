@@ -28,20 +28,22 @@ export default function Auth({ initialTab = 'login' }) {
   })()
 
   function redirect(role) {
+    const params = new URLSearchParams(window.location.search);
+    const returnUrl = params.get('returnUrl');
+
+    // Initialize data based on role
     if (role === 'entrepreneur') {
-      nav('/entrepreneurs');
-      // Initialize entrepreneur data
       if (!localStorage.getItem('milestones')) localStorage.setItem('milestones', '[]');
       if (!localStorage.getItem('teamMembers')) localStorage.setItem('teamMembers', '[]');
       if (!localStorage.getItem('entrepreneurProfiles')) localStorage.setItem('entrepreneurProfiles', '[]');
+      nav(returnUrl || '/entrepreneurs');
     } else if (role === 'investor') {
-      nav('/investors');
-      // Initialize investor data
       if (!localStorage.getItem('deals')) localStorage.setItem('deals', '[]');
       if (!localStorage.getItem('meetings')) localStorage.setItem('meetings', '[]');
       if (!localStorage.getItem('investorProfiles')) localStorage.setItem('investorProfiles', '[]');
+      nav(returnUrl || '/investors');
     } else {
-      nav('/freelancers');
+      nav(returnUrl || '/freelancers');
       // Initialize freelancer data
       if (!localStorage.getItem('portfolio')) localStorage.setItem('portfolio', '[]');
       if (!localStorage.getItem('applications')) localStorage.setItem('applications', '[]');
