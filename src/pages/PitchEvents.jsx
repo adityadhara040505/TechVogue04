@@ -18,18 +18,57 @@ export default function PitchEvents() {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/pitch-events');
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:5000/api/pitch-events', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.status === 401) {
+        toast.error('Please sign in to view events');
+        return;
+      }
+      
       if (!response.ok) {
         throw new Error('Failed to fetch events');
       }
+      
       const data = await response.json();
       console.log('Fetched events:', data);
-      setEvents(data);
+      
+      // Transform the data for FullCalendar
+      const transformedEvents = data.map(event => ({
+        id: event._id,
+        title: event.title,
+        start: event.date,
+        end: event.endDate || event.date, // Use endDate if available
+        description: event.description,
+        location: event.location,
+        extendedProps: {
+          status: event.status,
+          attendees: event.attendees || [],
+          organizer: event.organizer,
+        },
+        className: getEventClassName(event)
+      }));
+      
+      setEvents(transformedEvents);
     } catch (error) {
       console.error('Error fetching events:', error);
       toast.error('Failed to load events');
     } finally {
       setLoading(false);
+    }
+  };
+  
+  const getEventClassName = (event) => {
+    const baseClass = 'px-2 py-1 rounded-lg font-medium text-sm';
+    if (new Date(event.date) > new Date()) {
+      return `${baseClass} bg-blue-100 text-blue-800 border border-blue-200`;
+    } else {
+      return `${baseClass} bg-gray-100 text-gray-800 border border-gray-200`;
     }
   };
 
@@ -42,7 +81,43 @@ export default function PitchEvents() {
   }
 
   const handleEventClick = (clickInfo) => {
-    window.location.href = `/pitch-events/${clickInfo.event.id}`;
+    const event = clickInfo.event;
+    toast(
+      <div>
+        <h3 className="font-bold text-lg mb-2">{event.title}</h3>
+        <p className="text-sm mb-1">
+          {new Date(event.start).toLocaleString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          })}
+        </p>
+        {event.extendedProps.location && (
+          <p className="text-sm mb-1">📍 {event.extendedProps.location}</p>
+        )}
+        {event.extendedProps.description && (
+          <p className="text-sm text-gray-600">{event.extendedProps.description}</p>
+        )}
+        <button
+          onClick={() => window.location.href = `/pitch-events/${event.id}`}
+          className="mt-2 text-sm text-blue-600 hover:text-blue-800"
+        >
+          View Details →
+        </button>
+      </div>,
+      {
+        duration: 5000,
+        style: {
+          padding: '16px',
+          borderRadius: '8px',
+          background: '#ffffff',
+          color: '#1f2937',
+        },
+      }
+    );
   };
 
   return (
@@ -105,13 +180,26 @@ export default function PitchEvents() {
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             initialView={view === 'Month' ? 'dayGridMonth' : 'timeGridWeek'}
             headerToolbar={false}
-            events={events.map(event => ({
-              id: event._id,
-              title: event.title,
-              start: event.date,
-              className: new Date(event.date) > new Date() ? 'bg-blue-600' : 'bg-gray-500'
-            }))}
+            events={events}
             eventClick={handleEventClick}
+            eventContent={(eventInfo) => ({
+              html: `
+                <div class="p-1 truncate">
+                  <div class="font-medium">${eventInfo.event.title}</div>
+                  ${eventInfo.event.extendedProps.location ? 
+                    `<div class="text-xs text-gray-600">${eventInfo.event.extendedProps.location}</div>` : 
+                    ''}
+                </div>
+              `
+            })}
+            eventDidMount={(info) => {
+              info.el.setAttribute('title', `
+                ${info.event.title}
+                Time: ${new Date(info.event.start).toLocaleTimeString()}
+                Location: ${info.event.extendedProps.location || 'TBD'}
+                ${info.event.extendedProps.description || ''}
+              `.trim());
+            }}
             dayMaxEvents={3}
             height="800px"
             contentHeight="auto"
@@ -124,6 +212,8 @@ export default function PitchEvents() {
               minute: '2-digit',
               meridiem: false
             }}
+            slotMinTime="08:00:00"
+            slotMaxTime="20:00:00"
           />
         </div>
 
